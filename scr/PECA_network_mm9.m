@@ -44,6 +44,7 @@ G=G(f);
 TFName=TFName(d==1,:);
 TF_binding=TF_binding(d==1,:);
 TFExp=G(f(d==1));
+R2=R2(d==1,:);
 
 fileID = fopen('peak_gene_100k_corr.bed');
 C = textscan(fileID,'%s %s %f32 %f32');
@@ -87,7 +88,7 @@ Cut=prctile(Back_score,99);
 [a b]=find((Score>Cut)==1);
 c=find((Score>Cut)==1);
 c1=full(Score(c));
-Net=[TFName(a) List(b)];
+Net=[TFName(a) geneName(b)];
 [a1,a2]=sort(H1','descend');
 a1=a1(1:10,:);
 a2=a2(1:10,:);
@@ -99,11 +100,13 @@ fid=fopen(filename,'wt');
 	fprintf(fid, '%s\t','TF');
 	fprintf(fid, '%s\t','TG');
 	fprintf(fid, '%s\t','Score');
+	fprintf(fid, '%s\t','FDR');
 	fprintf(fid, '%s\n','REs');
 for i=1:size(Net,1)
 	fprintf(fid, '%s\t',Net{i,1});
 	fprintf(fid, '%s\t',Net{i,2});
 	fprintf(fid, '%g\t',Net{i,3});
+	fprintf(fid, '%g\t',(sum(Back_score>d(i))+1)/length(Back_score));
 	fprintf(fid, '%s\n',Net{i,4});
 end
 fclose(fid);
