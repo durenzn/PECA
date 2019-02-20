@@ -17,7 +17,7 @@ cd PECA-master/
 
 bash install.sh
 
-bash run_PECA.sh
+bash PECA.sh ${sampleName} ${genome}
 
 ## Install:
 
@@ -25,9 +25,10 @@ bash install.sh
 
 ## Run PECA:
 
-1, edit the two input in run_PECA.sh files, sampleName and genome (line 10 and 11 in run_PECA.sh).
+Run PECA by following two steps:
 
-2, Put the input files in folder named ./Input. Three files: ${SampleName}.txt, ${SampleName}.bam, ${SampleName}.bam.bai.
+### Step 1: Input 
+Put the input files in folder named ./Input. Three files: ${SampleName}.txt, ${SampleName}.bam, ${SampleName}.bam.bai.
 
 ${SampleName}.txt is gene expression file containing two columns (tab delimited), gene Symbol and FPKM (or TPM). 
 
@@ -35,27 +36,28 @@ ${SampleName}.bam is chromatin accessibility data, DNase-seq or ATAC-seq.
 
 ${SampleName}.bam.bai is the index file of bam file. 
 
-Please see the example of RAd4 in the ./Input directory.
+Note that all the three files should have same before-dot-file-name ${SampleName},only difference is after dot ".txt", ".bam" or ".bam.bai". Please see the example of RAd4 in the ./Input directory.
 
-3, bash run_PECA.sh
+### Step 2: Run 
+sh PECA.sh ${sampleName} ${genome}
 
-Example: run_PECA.sh
+Example: sh PECA.sh RAd4 mm9
 
 The results will be ./Results/${SampleName}/ .
 ${SampleName}_network.txt is the tissue specific network.
 
-TFTG_regulationScore.txt is regulation strength for the all TF to TG. Row name and column name are TFName.txt and TGName.txt
+TFTG_score.txt is regulation strength for the all TF to TG. Each row represent one TF and each column represents one target gene. Higher value represents higher possibility of regulation.
 
 CRB_pval.txt is the Chromatin regulators' (CR) binding site matrix, each column represent one CR, each row represent one region, the values are p-values.
 
 ## Run PECA_net_dif:
 If you have two samples and want to compare the two samples at network level, please do it by following steps:
 
-1, Run PECA on two samples one by one by "Run PECA"
+1, Prepare two networks: Run PECA on two samples one by one by "sh PECA.sh ${sampleName} ${genome}"
 
-2, Edit the Sample1, Sample2 and organism in run_PECA_compare_dif.sh (line 3,4 and 5 in run_PECA_compare_dif.sh). 
+2, Run:  sh PECA_compare_dif.sh ${Sample1} ${Sample2} ${Organism}
 
-3, bash run_PECA_compare_dif.sh
+Example: sh PECA_compare_dif.sh K562 GM12878 human ; sh PECA_compare_dif.sh mESC RAd4 mouse
 
 The results will be ./Results/Compare_${Sample1}_${Sample2}. Containing six files:  
 
@@ -67,19 +69,18 @@ specific module of two networks:  ${Sample1}_specific_module.txt and ${Sample2}_
 
 common module of two samples: ${Sample1}_${Sample2}_common_module.txt 
 
-Files PooledNetwork.txt or PooledModuole.txt can be used to visilize the network by cytoscype, and the node lable is given in file Node_lable.txt. "1" and "-1" in PooledNetwork.txt or PooledModuole.txt represent "Activation" and "Repression" respectively. "1" and "2" in Node_lable.txt represent the gene is Sample1 specific or Sample2 specific.
+Files PooledNetwork.txt or PooledModuole.txt can be used to visualize the network by cytoscype, and the node lable is given in file Node_lable.txt. "1" and "-1" in PooledNetwork.txt or PooledModuole.txt represent "Activation" and "Repression" respectively. "1" and "2" in Node_lable.txt represent the gene is Sample1 specific or Sample2 specific.
 
 ## Run PECA_net_dif_multiple:
 If you have two conditions (multiple samples in each conditions) and want to compare the two conditions at network level, please do it by following steps:
 
-1, Run PECA on all the samples from two conditions one by one by "Run PECA"
+1, Prepare networks: Run PECA on all the samples from two conditions one by one by "sh PECA.sh ${sampleName} ${genome}"
 
-2, Write the sample names of Group1 and Group2 into text files named $Group1 and $Group2, respectively. (eg. create one text file named "Control" and put the sample names of one condition to this file, create other text file named "Case" and put the names of the other condition to this file. Note that the sample name files contain one sample name per line )
+2, Construct lables: Write the sample names of Group1 and Group2 into text files named $Group1 and $Group2, respectively. (eg. create one text file named "Control" and put the sample names of one condition to this file, create other text file named "Case" and put the names of the other condition to this file. Note that the sample name files contain one sample name per line )
 
-3, Edit the Group1, Group2 and organism in run_PECA_compare_dif_multiple.sh (line 3, 4 and 5 in run_PECA_compare_dif_multiple.sh, eg. Group1=Control; Group2=Case ; organism=human )
-
-4, bash run_PECA_compare_dif_multiple.sh
-
+3, Run: sh PECA_compare_dif_multiple.sh $Group1 $Group2 ${Organism}
+Example： sh PECA_compare_dif_multiple.sh Control Case human
+ 
 The results will be ./Results/CompareGroup_${Group1}_${Group2}. Containing six files:  
 
 specific network of two conditions: ${Group1}_specific_network.txt and ${Group2}_specific_network.txt
@@ -90,7 +91,7 @@ specific module of two conditions:  ${Group1}_specific_module.txt and ${Group2}_
 
 common module of two conditions: ${Group1}_${Group2}_common_module.txt
 
-Files PooledNetwork.txt or PooledModuole.txt can be used to visilize the network by cytoscype, and the node lable is given in file Node_lable.txt. "1" and "-1" in PooledNetwork.txt or PooledModuole.txt represent "Activation" and "Repression" respectively. "1" and "2" in Node_lable.txt represent the gene is Group1 specific or Group2 specific.
+Files PooledNetwork.txt or PooledModuole.txt can be used to visualize the network by cytoscype, and the node lable is given in file Node_lable.txt. "1" and "-1" in PooledNetwork.txt or PooledModuole.txt represent "Activation" and "Repression" respectively. "1" and "2" in Node_lable.txt represent the gene is Group1 specific or Group2 specific.
 
 ## Requirements:
 
